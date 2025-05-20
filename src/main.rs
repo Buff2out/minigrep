@@ -1,7 +1,8 @@
 use std::env;
+use std::error::Error;
 use std::fs;
 
-fn main() {
+fn main() -> Result<(), Box<dyn Error>> {
     let args: Vec<String> = env::args().collect();
 
     let config = Config::new(&args);
@@ -10,18 +11,24 @@ fn main() {
         Ok(val) => val,
         Err(msg) => {
             println!("{}", msg);
-            return;
+            return Err(msg.into());
         },
     };
 
     println!("Searching for {}", config.query);
     println!("In file {}", config.file_path);
 
-    let contents = fs::read_to_string(config.file_path)
-        .expect("Should have been able to read the file");
+    run(config)
     
-    println!("{:?}", contents);
+    
     // --snip--
+}
+
+fn run(config: Config) -> Result<(), Box<dyn Error>> {
+    let contents = fs::read_to_string(config.file_path)?;
+
+    println!("{:?}", contents);
+    Ok(())
 }
 
 #[derive(Debug)]
