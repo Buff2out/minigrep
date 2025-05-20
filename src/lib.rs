@@ -7,24 +7,25 @@ use std::cmp::Ordering::{Less, Equal, Greater};
 pub struct Config {
     pub query: String,
     pub file_path: String,
+    pub contents: String,
 }
 
 impl Config {
     pub fn new(args: &[String]) -> Result<Config, &'static str> {
-        match args.len().cmp(&2) {
+        match args.len().cmp(&3) {
             Equal | Greater => {
-                let query = args[0].clone();
-                let file_path = args[1].clone();
-                
-                Ok(Config { query, file_path })
+                let query = args[1].clone();
+                let file_path = args[2].clone();
+                let contents = "".to_string();
+                Ok(Config { query, file_path, contents })
             },
             Less => Err("not enough args"),
         }
     }
-    pub fn run(self) -> Result<(), Box<dyn Error>> {
-        let contents = fs::read_to_string(self.file_path)?;
-    
-        println!("{:?}", contents);
+    pub fn run(mut self) -> Result<(), Box<dyn Error>> {
+        self.contents = fs::read_to_string(self.file_path)?;
+        let res = search(&self.query, &self.contents);
+        println!("{:?}", res);
         Ok(())
     }
 }
