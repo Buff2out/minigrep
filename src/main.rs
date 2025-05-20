@@ -5,9 +5,7 @@ use minigrep::Config;
 fn main() -> Result<(), Box<dyn Error>> {
     let args: Vec<String> = env::args().collect();
 
-    let config = Config::new(&args);
-
-    let config = match config {
+    let config = match Config::new(&args) {
         Ok(val) => val,
         Err(msg) => {
             println!("{}", msg);
