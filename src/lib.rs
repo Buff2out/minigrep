@@ -11,16 +11,20 @@ pub struct Config {
 }
 
 impl Config {
-    pub fn new(args: &[String]) -> Result<Config, &'static str> {
-        match args.len().cmp(&3) {
-            Equal | Greater => {
-                let query = args[1].clone();
-                let file_path = args[2].clone();
-                let contents = "".to_string();
-                Ok(Config { query, file_path, contents })
-            },
-            Less => Err("not enough args"),
-        }
+    pub fn new(
+        mut args: impl Iterator<Item = String>,
+    ) -> Result<Config, &'static str> {
+            args.next();
+            let query = match args.next() {
+                Some(val) => val,
+                None => return Err("Didn't get a query str"),
+            };
+            let file_path = match args.next() {
+                Some(fpath) => fpath,
+                None => return Err("Uncorrect filepath"),
+            };
+            let contents = "".to_string();
+            Ok(Config { query, file_path, contents })
     }
     pub fn run(mut self) -> Result<(), Box<dyn Error>> {
         self.contents = fs::read_to_string(self.file_path)?;
