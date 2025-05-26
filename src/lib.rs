@@ -1,6 +1,6 @@
 use std::fs;
 use std::error::Error;
-use std::cmp::Ordering::{Less, Equal, Greater};
+// use std::cmp::Ordering::{Less, Equal, Greater};
 
 
 #[derive(Debug)]
@@ -35,14 +35,7 @@ impl Config {
 }
 
 pub fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
-    let mut res: Vec<&str> = Vec::new();
-    for line in contents.lines() {
-        match line.contains(query) {
-            true => res.push(line),
-            false => (),
-        }
-    }
-    res
+    contents.lines().filter(|line| line.contains(query) ).collect()
 }
 
 pub fn search_case_insensitive<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
