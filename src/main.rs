@@ -1,23 +1,17 @@
-use std::{env, error::Error};
+use std::{env, error::Error, process};
 use minigrep::Config;
 
 
-fn main() -> Result<(), Box<dyn Error>> {
+fn main() -> Result<(), Box<dyn Error>> { 
 
-    let config = match Config::new(env::args()) {
-        Ok(val) => val,
-        Err(msg) => {
-            println!("{}", msg);
-            return Err(msg.into());
-        },
-    };
+    let config = Config::new(env::args()).unwrap_or_else(|err| {
+        eprintln!("Problem parsing arguments: {}", err);
+        process::exit(1);
+    });
 
     println!("Searching for {}", config.query);
     println!("In file {}", config.file_path);
 
     config.run()
-    
-    
-    // --snip--
 }
 
